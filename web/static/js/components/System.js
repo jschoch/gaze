@@ -50,6 +50,7 @@ export default React.createClass({
   },
 
   render() {
+    console.log("system state",this.state)
     var system = this.state.system;
     if (!system) return <div/>;
     var panels = system.panels;

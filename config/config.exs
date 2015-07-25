@@ -7,7 +7,7 @@ use Mix.Config
 
 # Configures the endpoint
 config :gaze, Gaze.Endpoint,
-  url: [host: "localhost"],
+  url: [host: "stink.net"],
   root: Path.expand("..", __DIR__),
   secret_key_base: "QAAuiGBL355S8u1QTnWNttvb/S6PHssuKbK0MDHsvnxb3DI4GjwmIcKpDUReG7lK",
   debug_errors: false,

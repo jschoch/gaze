@@ -3,13 +3,14 @@ import Reflux from "bower_components/reflux/dist/reflux";
 import cx from "bower_components/classnames";
 import System from "./System";
 import Charts from "./Charts";
+import Foo from "./Foo";
 import SocketStore from "../stores/SocketStore";
 
 export default React.createClass({
   mixins: [Reflux.connect(SocketStore, "socket")],
 
   render() {
-    return <div>
+    return <div>hello
       {this.renderNav()}
       {this.renderContainer()}
     </div>;
@@ -20,6 +21,7 @@ export default React.createClass({
       <div className="container">
         <div className="navbar-header">
           <button type="button" className="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-collapse">
+            <span className="icon-bar"></span>
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
             <span className="icon-bar"></span>
@@ -66,11 +68,12 @@ export default React.createClass({
   getInitialState() {
     return {
       nav: [
-        {id: "nav_system",       value: "System",       component: System,  active: true},
+        {id: "nav_system",       value: "System",       component: System,  active: false},
         {id: "nav_load_charts",  value: "Load charts",  component: Charts,  active: false},
-        {id: "nav_applications", value: "Applications", component: null,    active: false}
+        {id: "nav_applications", value: "Applications", component: null,    active: false},
+        {id: "nav_foo", value: "Chat", component: Foo,    active: true}
       ],
-      activeComponent: System
+      activeComponent: Foo
     }
   },
 

@@ -7,7 +7,10 @@
     <meta name="description" content="">
     <meta name="author" content="">
 
-    <title>Gaze</title>
+    <title>Gaze!</title>
+    <script src="https://code.jquery.com/jquery-1.11.3.js"></script> 
+    <link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet" type="text/css" />
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
   </head>
 

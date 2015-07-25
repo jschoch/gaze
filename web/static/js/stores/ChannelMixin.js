@@ -10,8 +10,14 @@ export default channelName => {
     },
 
     onJoined(joinedChannelName, chan) {
+      console.log("onJoined",joinedChannelName)
       if (channelName == joinedChannelName) {
+        chan.on("msg", data => {
+          console.log("saw msg",this);
+          this.onUpdate(data);
+        });
         chan.on("update", data => {
+          console.log("update seen in channelMixin");
           this.onUpdate(data);
         });
       }
