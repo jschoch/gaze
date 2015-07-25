@@ -19,13 +19,18 @@ export default Reflux.createStore({
   },
 
   onJoin(channelName) {
-    var chan = this._socket.chan(channelName, {});
-
+    var chan = this._socket.chan(channelName, {name: "hell me"});
+    var self = this
     chan.join().receive("ok", () => {
       Actions.joined(channelName, chan);
+      self.onFoo(chan)
     });
+    return chan
   },
-
+  onFoo(chan) {
+    console.log("foo chan",chan)
+    this.foo = chan
+  },
   onSocketOpen() {
     this.connected = true;
     this.trigger(this);

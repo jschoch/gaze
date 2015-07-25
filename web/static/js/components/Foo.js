@@ -1,30 +1,29 @@
 import React from "bower_components/react/react";
 import Reflux from "bower_components/reflux/dist/reflux";
-import SystemStore from "../stores/FooStore";
+import FooStore from "../stores/FooStore";
 import Actions from "../Actions";
 import {Socket} from "../../vendor/phoenix";
+import SocketStore from "../stores/SocketStore";
 
 
 export default React.createClass({
-   mixins: [Reflux.connect(SystemStore, "foo")],
+  mixins: [
+    Reflux.connect(SocketStore,"socket"),
+    Reflux.connect(FooStore, "foo")],
 
-  componentWillMount() {
-    var res = Actions.join("foo");
-    console.log("will mount: ",res)
-  },
   getInitialState: function(){
-    console.log("init state fail?",this);
-    var s = new Socket("/gaze/ws")
-    s.connect()
-    var chan = s.chan("foo",{})
-    chan.join()
+    var name = "no name"
+    chan = Actions.join("foo"); 
+    console.log("chan from init",chan)
+    //var chan = this.state.socket
+    var chan = "foo"
+    //chan.join()
     return({
       //foo: 
-      name: "no name",
-      socket: s,
+      name: name,
       chan: chan,
-      message: "no message",
-      messages: [{from: "System",text: "Welcome: please enter a name and message and then click Send!"}]
+      text: "",
+      messages: [{from: "Local System",text: "Welcome: "+name}]
     })
   },
   onUpdate: function(data){
@@ -32,12 +31,19 @@ export default React.createClass({
   },
   onClick: function(event){
     console.log("state",this.state,this.state.chan);
-    var res = this.state.chan.push("msg",{from: this.state.name,text: this.state.message})
+    //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
+    var chan = this.state.socket.foo
+    console.log("chan",chan)
+    var self = this
+    if(chan.state == "closed"){
+      console.log("shit need to  join")
+    }
+    var res = chan.push("msg",{from: this.state.name,text: this.state.text})
     this.setState({text: ""})
     
   },
   handleMsgChange: function(event){
-    this.setState({message: event.target.value})
+    this.setState({text: event.target.value})
   },
   handleNameChange: function(event){
     this.setState({name: event.target.value})
@@ -45,19 +51,23 @@ export default React.createClass({
   clearMsgs: function(){
     this.setState({messages: []});
   },
+  setName: function(name){
+    this.setState({name: name})
+  },
   render: function(){
     console.log("render called: state: ",this.state)
-    if (this.state.foo && this.state.foo.msg){
+    if (this.state.foo ){
       //this.setState(
-      this.state.messages.push(this.state.foo.msg)
+      var msg = this.state.foo
+      this.state.messages.push(msg)
       this.state.foo = null;
     }
     return (
     <div>
-      <MyModal /> 
+      <MyModal setName={this.setName}/> 
       <h2>Gaze Chat</h2>
-      Enter Name: <input type="text" onChange={this.handleNameChange}></input>
-      Enter Message: <input type="text" onChange={this.handleMsgChange}></input>
+      <button className="btn btn-xs">{this.state.name}</button>
+      Enter Message: <input type="text" onChange={this.handleMsgChange} value={this.state.text}></input>
       <button className="btn btn-xs" onClick={this.onClick}>Send!</button>
       <hr/>
       Messages:
@@ -89,9 +99,15 @@ var Msgs = React.createClass({
 })
 var MyModal = React.createClass({
   getInitialState(){
-    return { showModal: false};
+    return { 
+      name: "",
+      showModal: true
+    };
   },
-
+  handleChange: function(event){
+    //console.log(event.target.value);
+    this.setState({name: event.target.value});
+  },
   Moff(){
     this.setState({ showModal: false });
   },
@@ -104,35 +120,27 @@ var MyModal = React.createClass({
       //$('#myInput').focus()
     //})
   //},
+  closeModal: function(event){
+    console.log("clicked: ",this.state.name);
+    if (this.state.name != ""){
+      this.setState({showModal: false})
+      this.props.setName(this.state.name)
+    }
+  },
   render() {
     return (
      <div>
-        modal here
-<div class="container">
-  <button type="button" class="btn btn-info btn-lg" onClick={this.Mon} data-target="#myModal">Open Modal</button>
-  {this.state.showModal ? 
-  <div class="modal fade" id="myModal" role="dialog">
-    <div class="modal-dialog">
-    
-      <div class="modal-content">
-        <div class="modal-header">
-          <button type="button" class="close" data-dismiss="modal">&times;</button>
-          <h4 class="modal-title">Modal Header</h4>
-        </div>
-        <div class="modal-body">
-          <p>Some text in the modal.</p>
-        </div>
-        <div class="modal-footer">
-          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        </div>
-      </div>
-      
+        {this.state.showModal ?
+<div className="jumbotron" style={{position: 'absolute', width: '100%', top: 0, height: 500}}>
+        <h3>Enter a Username</h3>
+        <input type="text" onChange={this.handleChange}></input>
+        <button 
+          className="btn btn-md btn-primary" 
+          onClick={this.closeModal}
+          >Submit</button>
+      </div>      
+      : null}
     </div>
-  </div>
-  : null}
-  
-</div>
-     </div>
     )
   }
 });

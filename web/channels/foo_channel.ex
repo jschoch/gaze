@@ -1,9 +1,8 @@
 defmodule Gaze.FooChannel do
   use Phoenix.Channel
   require Logger
-  def join("foo", _msg, socket) do
-    Logger.info("joined foo")
-    #send self, :update
+  def join("foo", msg, socket) do
+    Logger.info("joined foo #{inspect msg}")
     send self, :welcome
     {:ok, socket}
   end
@@ -11,7 +10,7 @@ defmodule Gaze.FooChannel do
     Logger.info("Welcome found")
     push socket, "msg", %{
       "from" => "system",
-      "msg" => "sup"
+      "text" => "sup"
     }
     {:noreply, socket}
   end
