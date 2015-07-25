@@ -89,23 +89,50 @@ var Msgs = React.createClass({
 })
 var MyModal = React.createClass({
   getInitialState(){
-    return { showModal: true};
+    return { showModal: false};
   },
 
-  close(){
+  Moff(){
     this.setState({ showModal: false });
   },
 
-  open(){
+  Mon(){
     this.setState({ showModal: true });
   },
-
+  //componentDidMount: function(){
+    //$('#myModal').on('shown.bs.modal', function () {
+      //$('#myInput').focus()
+    //})
+  //},
   render() {
-
     return (
-      <div>
+     <div>
         modal here
+<div class="container">
+  <button type="button" class="btn btn-info btn-lg" onClick={this.Mon} data-target="#myModal">Open Modal</button>
+  {this.state.showModal ? 
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Modal Header</h4>
+        </div>
+        <div class="modal-body">
+          <p>Some text in the modal.</p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        </div>
       </div>
+      
+    </div>
+  </div>
+  : null}
+  
+</div>
+     </div>
     )
   }
 });
