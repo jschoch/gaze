@@ -1,27 +1,22 @@
 import React from "bower_components/react/react";
 import Reflux from "bower_components/reflux/dist/reflux";
-import FooStore from "../stores/FooStore";
+//import FooStore from "../stores/FooStore";
 import Actions from "../Actions";
 import {Socket} from "../../vendor/phoenix";
 import SocketStore from "../stores/SocketStore";
 
 
 export default React.createClass({
-  mixins: [
-    Reflux.connect(SocketStore,"socket"),
-    Reflux.connect(FooStore, "foo")],
+  //mixins: [
+   // Reflux.connect(SocketStore,"socket"),
+    //Reflux.connect(FooStore, "foo")],
+  mixins: [Reflux.connect(SocketStore,"socket")],
 
   getInitialState: function(){
     var name = "no name"
-    chan = Actions.join("foo"); 
-    console.log("chan from init",chan)
-    //var chan = this.state.socket
-    var chan = "foo"
-    //chan.join()
+    Actions.join("foo"); 
     return({
-      //foo: 
       name: name,
-      chan: chan,
       text: "",
       messages: [{from: "Local System",text: "Welcome: "+name}]
     })
@@ -32,12 +27,8 @@ export default React.createClass({
   onClick: function(event){
     console.log("state",this.state,this.state.chan);
     //var chan = this.state.socket._socket.chan("foo",{name: this.state.name})
-    var chan = this.state.socket.foo
+    var chan = this.state.socket.foo_chan
     console.log("chan",chan)
-    var self = this
-    if(chan.state == "closed"){
-      console.log("shit need to  join")
-    }
     var res = chan.push("msg",{from: this.state.name,text: this.state.text})
     this.setState({text: ""})
     
@@ -54,20 +45,29 @@ export default React.createClass({
   setName: function(name){
     this.setState({name: name})
   },
+  submitMsg: function(event){
+    if(event.keyCode == 13){
+      this.onClick(event)
+    }
+  },
+  submitName: function(name){
+    this.setState({name: name})
+  },
+
   render: function(){
-    console.log("render called: state: ",this.state)
-    if (this.state.foo ){
+    //console.log("render called: state: ",this.state)
+    if (this.state.socket.in_msg){
       //this.setState(
-      var msg = this.state.foo
+      var msg = this.state.socket.in_msg
       this.state.messages.push(msg)
-      this.state.foo = null;
+      this.state.socket.in_msg = null;
     }
     return (
     <div>
-      <MyModal setName={this.setName}/> 
+      <MyModal setName={this.setName} submitName={this.submitName}/> 
       <h2>Gaze Chat</h2>
       <button className="btn btn-xs">{this.state.name}</button>
-      Enter Message: <input type="text" onChange={this.handleMsgChange} value={this.state.text}></input>
+      Enter Message: <input type="text" onChange={this.handleMsgChange} value={this.state.text} onKeyDown={this.submitMsg}></input>
       <button className="btn btn-xs" onClick={this.onClick}>Send!</button>
       <hr/>
       Messages:
@@ -127,13 +127,23 @@ var MyModal = React.createClass({
       this.props.setName(this.state.name)
     }
   },
+  submit: function(event){
+    if(event.keyCode == 13){
+      this.props.submitName(event.target.value);
+      this.closeModal(event);
+    }
+  },
   render() {
     return (
      <div>
         {this.state.showModal ?
 <div className="jumbotron" style={{position: 'absolute', width: '100%', top: 0, height: 500}}>
         <h3>Enter a Username</h3>
-        <input type="text" onChange={this.handleChange}></input>
+        <input 
+          type="text" 
+          onChange={this.handleChange}
+          onKeyDown={this.submit}>
+        </input>
         <button 
           className="btn btn-md btn-primary" 
           onClick={this.closeModal}

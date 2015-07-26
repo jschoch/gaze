@@ -1,3 +1,8 @@
+# Gaze chat hack
+
+
+added chat to gaze to better understand reflux react and phoenix channels
+
 # Gaze
 
 To start your new Phoenix application:

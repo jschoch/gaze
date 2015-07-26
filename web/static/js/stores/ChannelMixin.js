@@ -11,16 +11,15 @@ export default channelName => {
 
     onJoined(joinedChannelName, chan) {
       console.log("onJoined",joinedChannelName,channelName,chan)
-      if(channelName == "foo"){
-        chan.on("msg", data => {
-          console.log("saw msg",this,"data",data);
-          //this.onUpdate(data);
-          this.trigger(data);
-        });
-      }
+      //if(channelName == "foo"){
+        //chan.on("msg", data => {
+          //console.log("saw msg",this,"data",data);
+          ////this.onUpdate(data);
+          //this.trigger(data);
+        //});
+      //}
       if (channelName.name != "foo" && channelName == joinedChannelName) {
         chan.on("update", data => {
-          console.log("update seen in channelMixin");
           this.onUpdate(data);
         });
       }
@@ -28,7 +27,6 @@ export default channelName => {
     },
 
     onUpdate(data) {
-      console.log("channel mixin onUpdate:",data);
       this.trigger(data);
     }
   }

@@ -20,12 +20,22 @@ export default Reflux.createStore({
 
   onJoin(channelName) {
     var chan = this._socket.chan(channelName, {name: "hell me"});
+    console.log("socketstore onjoin called for ",channelName);
+    if(channelName == "foo"){
+        chan.on("msg", data => {
+          console.log("saw msg",this,"data",data);
+          //this.onUpdate(data);
+          
+          this.trigger({in_msg: data,foo_chan: chan});
+        });
+      }
+
     var self = this
     chan.join().receive("ok", () => {
+      console.log("chan.join promise",this)
       Actions.joined(channelName, chan);
       self.onFoo(chan)
     });
-    return chan
   },
   onFoo(chan) {
     console.log("foo chan",chan)
